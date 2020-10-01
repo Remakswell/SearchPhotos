@@ -75,7 +75,7 @@ class PhotosActivity : AppCompatActivity() {
     }
 
     private fun updateAdapter(realmResults: RealmResults<Photo>) {
-        progress.visibility = View.GONE
+        hideProgress()
 
         photosAdapter.photos.clear()
         photosAdapter.photos.addAll(realmResults)
@@ -92,8 +92,8 @@ class PhotosActivity : AppCompatActivity() {
         }
         photos?.let {
             if (it.isEmpty()) {
+                hideProgress()
                 Toast.makeText(this, getString(R.string.nothing_found), Toast.LENGTH_SHORT).show()
-                progress.visibility = View.GONE
                 return
             }
             saveData(it)
@@ -101,11 +101,16 @@ class PhotosActivity : AppCompatActivity() {
     }
 
     private fun onError(th: Throwable) {
+        hideProgress()
         Toast.makeText(this, th.message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun hideProgress() {
+        progress.visibility = View.GONE
+    }
+
     private fun initView() {
-        searchBox.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+        searchBox.setOnEditorActionListener { v, actionId, event ->
             if (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
 
                 val queryText = v.text.toString()
@@ -114,6 +119,6 @@ class PhotosActivity : AppCompatActivity() {
                 }
             }
             false
-        })
+        }
     }
 }
